@@ -187,7 +187,7 @@ export default class Carousel extends Component {
     const nextPage = this._calculateNextPage(direction);
     if (this.nextPage !== nextPage) {
       this.nextPage = nextPage;
-      if (this.props.onPageBeingChanged) {
+      if (this.props.onPageBeingChanged, direction) {
         this.props.onPageBeingChanged(this.nextPage);
       }
     }
@@ -245,7 +245,7 @@ export default class Carousel extends Component {
     this.animateToPage(nextPage);
   }
 
-  animateToPage = (page) => {
+  animateToPage = (page, isAnimated = true) => {
     const { currentPage, childrenLength, size: { width } } = this.state;
     const { isLooped } = this.props;
     const nextPage = this._normalizePageNumber(page);
@@ -262,9 +262,9 @@ export default class Carousel extends Component {
             nofix: true,
           });
         }
-        this._scrollTo({ offset: childrenLength * width, animated: true });
+        this._scrollTo({ offset: childrenLength * width, animated: isAnimated });
       } else {
-        this._scrollTo({ offset: 0, animated: true });
+        this._scrollTo({ offset: 0, animated: isAnimated });
       }
     } else if (nextPage === 1) {
       // To properly animate from the first page we need to move view
@@ -272,13 +272,13 @@ export default class Carousel extends Component {
       if (currentPage === 0 && isLooped) {
         this._scrollTo({ offset: 0, animated: false, nofix: true });
       }
-      this._scrollTo({ offset: width, animated: true });
+      this._scrollTo({ offset: width, animated: isAnimated });
     } else {
       // Last page is allowed to jump to the first through the "border"
       if (currentPage === 0 && nextPage !== childrenLength - 1) {
         this._scrollTo({ offset: 0, animated: false, nofix: true });
       }
-      this._scrollTo({ offset: nextPage * width, animated: true });
+      this._scrollTo({ offset: nextPage * width, animated: isAnimated });
     }
     this._setCurrentPage(nextPage);
     this._setUpTimer();
